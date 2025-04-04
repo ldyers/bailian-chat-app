@@ -1,0 +1,35 @@
+<view class="chat-container">
+  <view class="network-test">
+    <button class="test-button" bindtap="testConnection">测试网络连接</button>
+    <text class="test-status">{{networkStatus}}</text>
+  </view>
+  
+  <scroll-view 
+    scroll-y="true" 
+    class="chat-messages"
+    scroll-into-view="{{scrollToMessage}}"
+    scroll-with-animation="true">
+    <block wx:for="{{messages}}" wx:key="index">
+      <view id="msg-{{index}}" class="message {{item.type === 'user' ? 'user-message' : 'bot-message'}}">
+        <text>{{item.content}}</text>
+      </view>
+    </block>
+    <!-- 用于自动滚动的锚点 -->
+    <view id="scroll-bottom"></view>
+  </scroll-view>
+  
+  <view class="input-container">
+    <input 
+      class="message-input" 
+      placeholder="输入消息..." 
+      value="{{inputValue}}" 
+      bindinput="onInput"
+      bindconfirm="sendMessage"
+      confirm-type="send"
+      cursor-spacing="10"
+    />
+    <button class="send-button" bindtap="sendMessage" disabled="{{sending}}">
+      {{sending ? '发送中...' : '发送'}}
+    </button>
+  </view>
+</view>

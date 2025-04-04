@@ -1,0 +1,7 @@
+{
+  "desc": "小程序的sitemap",
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天应用</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .chat-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .bot-message {
+            background-color: #f1f1f1;
+            margin-right: auto;
+        }
+        .input-container {
+            display: flex;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #1e88e5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1565c0;
+        }
+        .status {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>百炼聊天应用</h1>
+    <div class="chat-container">
+        <div class="chat-messages" id="chat-messages">
+            <div class="message bot-message">您好！我是AI助手，有什么可以帮助您的？</div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="message-input" placeholder="输入消息..." />
+            <button id="send-button">发送</button>
+        </div>
+    </div>
+    <div class="status" id="status"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const chatMessages = document.getElementById('chat-messages');
+            const statusDiv = document.getElementById('status');
+            
+            let sessionId = null;
+            
+            // 发送消息的函数
+            async function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                // 显示用户消息
+                chatMessages.innerHTML += `<div class="message user-message">${message}</div>`;
+                messageInput.value = '';
+                
+                // 自动滚动到最新消息
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // 显示发送状态
+                statusDiv.textContent = '正在发送...';
+                
+                try {
+                    // 发送请求到API
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            session_id: sessionId
+                        })
+                    });
+                    
+                    // 解析响应
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // 保存会话ID用于下一次请求
+                        sessionId = data.session_id;
+                        
+                        // 显示机器人响应
+                        chatMessages.innerHTML += `<div class="message bot-message">${data.text}</div>`;
+                        
+                        // 更新状态
+                        statusDiv.textContent = '已收到回复';
+                    } else {
+                        // 处理错误
+                        const errorData = await response.json();
+                        statusDiv.textContent = `错误：${errorData.detail || '未知错误'}`;
+                        chatMessages.innerHTML += `<div class="message bot-message">抱歉，我遇到了问题。请稍后再试。</div>`;
+                    }
+                } catch (error) {
+                    // 处理网络错误
+                    statusDiv.textContent = `错误：${error.message}`;
+                    chatMessages.innerHTML += `<div class="message bot-message">抱歉，发生了网络错误。请检查您的连接。</div>`;
+                }
+                
+                // 自动滚动到最新消息
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // 绑定发送按钮点击事件
+            sendButton.addEventListener('click', sendMessage);
+            
+            // 绑定按回车键发送
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

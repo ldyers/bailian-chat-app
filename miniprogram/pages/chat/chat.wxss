@@ -66,8 +66,8 @@
 
 /* 用户消息 */
 .user-message {
-  background-color: #1e88e5;
-  color: white;
+  background-color: #4CAF50; /* 绿色背景 */
+  color: #000000; /* 黑色文字 */
   align-self: flex-end;
   margin-left: auto;
   border-bottom-right-radius: 4px;
@@ -75,8 +75,8 @@
 
 /* 机器人消息 */
 .bot-message {
-  background-color: #f1f1f1;
-  color: #333;
+  background-color: #212121; /* 黑色背景 */
+  color: #FFFFFF; /* 白色文字 */
   align-self: flex-start;
   margin-right: auto;
   border-bottom-left-radius: 4px;
@@ -105,8 +105,8 @@
   width: 80px !important;
   height: 40px;
   line-height: 40px;
-  background-color: #1e88e5;
-  color: white;
+  background-color: #4CAF50; /* 保持与用户消息一致的绿色 */
+  color: black;
   border-radius: 20px;
   font-size: 14px;
   padding: 0;
@@ -115,6 +115,6 @@
 
 /* 禁用状态的发送按钮 */
 .send-button[disabled] {
-  background-color: #9dc1e8;
-  color: #eee;
+  background-color: #a5d6a7; /* 浅绿色 */
+  color: #333;
 }

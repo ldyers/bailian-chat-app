@@ -13,11 +13,17 @@ Page({
     sending: false,
     scrollToMessage: 'scroll-bottom',
     sessionId: null,
-    networkStatus: '点击按钮测试网络连接'
+    networkStatus: '点击按钮测试网络连接',
+    apiBaseUrl: ''
   },
 
   onLoad() {
-    // 页面加载时的处理
+    // 页面加载时获取全局配置的API地址
+    this.setData({
+      apiBaseUrl: app.globalData.apiBaseUrl,
+      networkStatus: `当前配置的服务器: ${app.globalData.apiBaseUrl} (${app.globalData.currentEnv === 'local' ? '本地环境' : '远程环境'})`
+    });
+    console.log('聊天页面已加载，当前API地址:', this.data.apiBaseUrl);
   },
 
   // 测试网络连接
@@ -26,16 +32,16 @@ Page({
       networkStatus: '正在测试连接...'
     });
 
-    console.log('测试连接到:', app.globalData.apiBaseUrl);
+    console.log('测试连接到:', this.data.apiBaseUrl);
 
     // 测试基本连接
     wx.request({
-      url: `${app.globalData.apiBaseUrl}/health`,
+      url: `${this.data.apiBaseUrl}/health`,
       method: 'GET',
       success: (res) => {
         console.log('连接测试成功:', res);
         this.setData({
-          networkStatus: `连接成功！服务器状态: ${res.data.status}, IP: ${app.globalData.apiBaseUrl}`
+          networkStatus: `连接成功！服务器状态: ${res.data.status}, IP: ${this.data.apiBaseUrl}`
         });
       },
       fail: (err) => {
@@ -56,10 +62,41 @@ Page({
         // 显示额外提示
         wx.showModal({
           title: '连接失败',
-          content: `无法连接到服务器 ${app.globalData.apiBaseUrl}，请检查:\n1. 后端服务是否运行\n2. IP地址是否正确\n3. 手机和电脑是否在同一网络`,
+          content: `无法连接到服务器 ${this.data.apiBaseUrl}，请检查:\n1. 后端服务是否运行\n2. IP地址是否正确\n3. 手机和电脑是否在同一网络`,
           showCancel: false
         });
       }
+    });
+  },
+
+  // 切换环境（本地/远程）
+  switchEnvironment() {
+    // 切换环境
+    const newEnv = app.globalData.currentEnv === 'local' ? 'remote' : 'local';
+    
+    // 更新全局环境配置
+    app.globalData.currentEnv = newEnv;
+    
+    // 根据新环境更新API地址
+    if (newEnv === 'local') {
+      app.globalData.apiBaseUrl = 'http://192.168.1.102:8000'; // 本地环境
+    } else {
+      app.globalData.apiBaseUrl = 'http://43.133.33.215:8000'; // 远程环境
+    }
+    
+    // 更新页面数据
+    this.setData({
+      apiBaseUrl: app.globalData.apiBaseUrl,
+      networkStatus: `已切换到${newEnv === 'local' ? '本地' : '远程'}环境: ${app.globalData.apiBaseUrl}`
+    });
+    
+    console.log('环境已切换:', newEnv, this.data.apiBaseUrl);
+    
+    // 提示用户环境已切换
+    wx.showToast({
+      title: `已切换到${newEnv === 'local' ? '本地' : '远程'}环境`,
+      icon: 'none',
+      duration: 2000
     });
   },
 
@@ -90,7 +127,7 @@ Page({
     
     // 调用后端API
     wx.request({
-      url: `${app.globalData.apiBaseUrl}/chat`,
+      url: `${this.data.apiBaseUrl}/chat`,
       method: 'POST',
       data: {
         message: content,

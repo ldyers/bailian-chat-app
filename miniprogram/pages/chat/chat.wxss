@@ -11,32 +11,52 @@
 /* 网络测试区域 */
 .network-test {
   display: flex;
-  align-items: center;
-  padding: 5px 0;
+  flex-direction: column;
+  padding: 5px;
   margin-bottom: 10px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* 测试按钮 */
-.test-button {
+/* 按钮组容器 */
+.button-group {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+/* 按钮基础样式 */
+.test-button, .switch-button {
   font-size: 12px;
   padding: 0 10px;
   height: 30px;
   line-height: 30px;
-  background-color: #f1f1f1;
   color: #333;
-  margin: 5px;
-  flex-shrink: 0;
+  margin: 0;
+  flex: 1;
+  margin-right: 10px;
+}
+
+/* 测试按钮特定样式 */
+.test-button {
+  background-color: #f1f1f1;
+}
+
+/* 切换环境按钮特定样式 */
+.switch-button {
+  background-color: #e1f5fe;
+  margin-right: 0;
 }
 
 /* 测试状态 */
 .test-status {
   font-size: 12px;
   color: #666;
-  margin-left: 10px;
-  flex: 1;
+  padding: 5px;
+  width: 100%;
+  box-sizing: border-box;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

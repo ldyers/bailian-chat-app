@@ -1,6 +1,9 @@
 <view class="chat-container">
   <view class="network-test">
-    <button class="test-button" bindtap="testConnection">测试网络连接</button>
+    <view class="button-group">
+      <button class="test-button" bindtap="testConnection">测试网络连接</button>
+      <button class="switch-button" bindtap="switchEnvironment">切换环境</button>
+    </view>
     <text class="test-status">{{networkStatus}}</text>
   </view>
   
